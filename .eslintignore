@@ -1,0 +1,6 @@
+// .eslintignore
+build/*
+dist/*
+public/*
+**/out/*
+**/node_modules/*

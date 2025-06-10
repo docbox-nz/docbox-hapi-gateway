@@ -1,0 +1,56 @@
+{
+  "name": "@docbox-nz/hapi-gateway",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "watch": "rollup -c --watch"
+  },
+  "main": "./dist/index.browser.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": {
+        "default": "./dist/index.d.ts"
+      },
+      "default": {
+        "require": "./dist/index.node.cjs",
+        "default": "./dist/index.node.esm.js"
+      }
+    }
+  },
+  "author": "Jacobtread",
+  "license": "MIT",
+  "description": "Docbox hapi server gateway",
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "axios": "^1.7.4"
+  },
+  "peerDependencies": {
+    "@hapi/hapi": "^20.1.0 || ^21.0.0"
+  },
+  "devDependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@hapi/hapi": "^21.4.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/node": "^24.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.55.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-perfectionist": "^2.5.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "prettier": "^3.1.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
+  }
+}

@@ -44,6 +44,7 @@ export function createDocboxRoutes(options: PluginOptions) {
   );
 
   const getRequestUser: PluginOptions['getRequestUser'] = options.getRequestUser ?? (() => null);
+  const getApiKey: PluginOptions['getApiKey'] = options.getApiKey ?? (() => null);
 
   // Base route for creating document boxes
   const createBoxRoute: ServerRoute = {
@@ -68,7 +69,9 @@ export function createDocboxRoutes(options: PluginOptions) {
 
       const tenant = await options.getRequestTenant(request);
       const user = await getRequestUser(request);
-      return forwardRequest(axiosInstance, request, tenant, user, h, path);
+      const apiKey = await getApiKey();
+
+      return forwardRequest(axiosInstance, request, tenant, user, apiKey, h, path);
     },
     options: baseRouteOptions,
   };
@@ -91,7 +94,9 @@ export function createDocboxRoutes(options: PluginOptions) {
 
       const tenant = await options.getRequestTenant(request);
       const user = await getRequestUser(request);
-      return forwardRequest(axiosInstance, request, tenant, user, h, path);
+      const apiKey = await getApiKey();
+
+      return forwardRequest(axiosInstance, request, tenant, user, apiKey, h, path);
     },
     options: { ...baseRouteOptions, ...baseForwardRouteOptions },
   };
@@ -120,7 +125,9 @@ export function createDocboxRoutes(options: PluginOptions) {
 
       const tenant = await options.getRequestTenant(request);
       const user = await getRequestUser(request);
-      return forwardRequest(axiosInstance, request, tenant, user, h, path);
+      const apiKey = await getApiKey();
+
+      return forwardRequest(axiosInstance, request, tenant, user, apiKey, h, path);
     },
     options: {
       ...baseRouteOptions,
@@ -176,6 +183,7 @@ function isWriteRequest(request: Request, path: string) {
  * @param axios Axios instance to forward the request through
  * @param request The request itself
  * @param user User performing the request
+ * @param apiKey API key for requests
  * @param h Response toolkit for creating the response
  * @param path Path requested from the server
  */
@@ -184,11 +192,16 @@ async function forwardRequest(
   request: Request,
   tenant: DocboxRequestTenant,
   user: DocboxRequestUser | null,
+  apiKey: string | null,
   h: ResponseToolkit,
   path: string
 ) {
   const userHeaders: Record<string, any> = request.headers;
   const forwardHeaders: Record<string, any> = {};
+
+  if (apiKey !== null) {
+    forwardHeaders['x-docbox-api-key'] = apiKey;
+  }
 
   // Forward content related headers
   if (userHeaders['accept'] !== undefined) {

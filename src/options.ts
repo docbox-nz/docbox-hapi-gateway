@@ -54,6 +54,13 @@ export interface PluginOptions {
   axiosConfig?: CreateAxiosDefaults;
 
   /**
+   * Get a API key for making requests to docbox
+   *
+   * @returns The key or a promise to the key
+   */
+  getApiKey?: () => (string | null) | Promise<string | null>;
+
+  /**
    * Write access check, will be invoked to check whether the request
    * has authorization to perform a write action against docbox
    *

@@ -1,10 +1,11 @@
 # 📦 @docbox-nz/hapi-gateway
 
-Docbox Gateway implementation for hapi 
+Docbox Gateway implementation for hapi
 
 Provides routes for forwarding requests to docbox and methods for enforcing access control over said routes
 
 ## Requirements
+
 - Hapi.js v20.1.0 or newer
 - Node.js 20+
 
@@ -18,13 +19,12 @@ npm i @docbox-nz/hapi-gateway
 
 You will also need to ensure that you have `@hapi/hapi` installed this plugin supports versions `^20.1.0 || ^21.0.0`
 
-
 ## Plugin setup
 
 For a simple installation where not much additional logic is required, you can add the following to your server setup
 
 ```js
-import { DocboxGateway } from "@docbox-nz/hapi-gateway";
+import { DocboxGateway } from '@docbox-nz/hapi-gateway';
 
 server.register({
   plugin: DocboxGateway,
@@ -32,25 +32,25 @@ server.register({
     // Prefix all routes with /data
     basePath: '/data',
     // Base request options for docbox routes
-    baseRouteOptions: { },
+    baseRouteOptions: {},
     // URL for the docbox API
-    docboxBaseURL: "http://docbox-server",
+    docboxBaseURL: 'http://docbox-server',
 
     // Get the tenant for a request
     getRequestTenant(request) {
       // ..derive your target tenant
       // this can be hard-coded for single tenant setups
-      return { id: '81284060-9542-4d66-9731-49ca3eb93bf9', env: "Development"}
+      return { id: '81284060-9542-4d66-9731-49ca3eb93bf9', env: 'Development' };
     },
 
     // Get the user for a request
     getRequestUser(request) {
       // ..derive your request user
       return {
-        id: "dd5ba8b5-7da2-4e8b-b255-9641faece80e",
-        name: "Example User",
-        imageId: "https://example.com/example.png"
-      }
+        id: 'dd5ba8b5-7da2-4e8b-b255-9641faece80e',
+        name: 'Example User',
+        imageId: 'https://example.com/example.png',
+      };
     },
 
     // Check request read access
@@ -64,7 +64,7 @@ server.register({
       // ..assert request is allowed to access scope
       return true;
     },
-  }
+  },
 });
 ```
 
@@ -73,31 +73,31 @@ server.register({
 If you have a more complex routing setup for your hapi app, you can use the `createDocboxRoutes` function to create a docbox setup and obtain a list of routes that you can manually add using `server.route`
 
 ```js
-import { createDocboxRoutes } from "@docbox-nz/hapi-gateway";
+import { createDocboxRoutes } from '@docbox-nz/hapi-gateway';
 
 const routes = createDocboxRoutes({
   // Prefix all routes with /data
   basePath: '/data',
   // Base request options for docbox routes
-  baseRouteOptions: { },
+  baseRouteOptions: {},
   // URL for the docbox API
-  docboxBaseURL: "http://docbox-server",
+  docboxBaseURL: 'http://docbox-server',
 
   // Get the tenant for a request
   getRequestTenant(request) {
     // ..derive your target tenant
     // this can be hard-coded for single tenant setups
-    return { id: '81284060-9542-4d66-9731-49ca3eb93bf9', env: "Development"}
+    return { id: '81284060-9542-4d66-9731-49ca3eb93bf9', env: 'Development' };
   },
 
   // Get the user for a request
   getRequestUser(request) {
     // ..derive your request user
     return {
-      id: "dd5ba8b5-7da2-4e8b-b255-9641faece80e",
-      name: "Example User",
-      imageId: "https://example.com/example.png"
-    }
+      id: 'dd5ba8b5-7da2-4e8b-b255-9641faece80e',
+      name: 'Example User',
+      imageId: 'https://example.com/example.png',
+    };
   },
 
   // Check request read access
@@ -116,10 +116,9 @@ const routes = createDocboxRoutes({
 module.exports = routes;
 ```
 
+## Example access control
 
-## Example access control 
-
-Access control is enforced on a scope level, you should check the `scope` (Document box scope) and decide whether the request should be allowed based 
+Access control is enforced on a scope level, you should check the `scope` (Document box scope) and decide whether the request should be allowed based
 on some information extracted from the request (or some other available context)
 
 > [!NOTE]
@@ -129,24 +128,19 @@ on some information extracted from the request (or some other available context)
 > `isAllowedWrite` also enforces the access control for creating new document boxes. Requests to `POST /box` are document box creation requests.
 
 ```js
-
 function isAllowedWrite(request, scope, path) {
+  // Get authenticated user scopes
+  const userScopes = request.auth.credentials.scope;
 
-    // Get authenticated user scopes
-    const userScopes = request.auth.credentials.scope
-
-    // User is trying to access the "admin-area" scope
-    if (scope === "admin-area") {
-
-        // Ensure the user has the required admin scope
-        if (userScopes.includes('admin')) {
-            return true;
-        }
-
+  // User is trying to access the "admin-area" scope
+  if (scope === 'admin-area') {
+    // Ensure the user has the required admin scope
+    if (userScopes.includes('admin')) {
+      return true;
     }
+  }
 
-    // Deny by default
-    return false;
-} 
-
+  // Deny by default
+  return false;
+}
 ```
